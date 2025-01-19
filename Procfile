@@ -1,1 +1,1 @@
-web: gunicorn circuit-chronicle.wsgi
+web: gunicorn circuit_chronicle.wsgi
