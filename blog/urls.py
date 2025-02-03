@@ -1,5 +1,6 @@
 from . import views
 from django.urls import path
+from .views import like_post
 
 
 urlpatterns = [
@@ -9,4 +10,5 @@ urlpatterns = [
          views.comment_edit, name='comment_edit'),
     path('<slug:slug>/delete_comment/<int:comment_id>',
          views.comment_delete, name='comment_delete'),
+    path('like/<int:post_id>/', like_post, name='like_post'),
 ]

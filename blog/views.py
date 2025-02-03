@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import render, get_object_or_404, reverse, redirect
 from django.views import generic
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .forms import CommentForm
 
 # Create your views here.
@@ -99,18 +99,17 @@ def comment_delete(request, slug, comment_id):
     return HttpResponseRedirect(reverse('post_detail', args=[slug]))
 
 
-def comment_delete(request, slug, comment_id):
-    """
-    view to delete comment
-    """
-    queryset = Post.objects.filter(status=1)
-    post = get_object_or_404(queryset, slug=slug)
-    comment = get_object_or_404(Comment, pk=comment_id)
 
-    if comment.author == request.user:
-        comment.delete()
-        messages.add_message(request, messages.SUCCESS, 'Comment deleted!')
-    else:
-        messages.add_message(request, messages.ERROR, 'You can only delete your own comments!')
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
 
-    return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+    if not request.user.is_authenticated:
+        return render(request, 'blog/login_required.html')  # Render the login required page
+
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
+        # If the like already exists, remove it (unlike)
+        like.delete()
+
+    return redirect('post_detail', slug=post.slug)  # Use slug for redirection

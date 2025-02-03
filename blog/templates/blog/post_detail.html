@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load static %}
 {% load crispy_forms_tags %}
 
@@ -28,9 +28,26 @@
                 <p class="card-text">
                     {{ post.content | safe }}
                 </p>
+                <!-- Like Button -->
+                <form action="{% url 'like_post' post.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">
+                        {% if user.is_authenticated %}
+                            {% if user in post.likes.all %}
+                                Unlike
+                            {% else %}
+                                Like
+                            {% endif %}
+                        {% else %}
+                            Like
+                        {% endif %}
+                    </button>
+                </form>
+                <span>{{ post.likes.count }} likes</span>
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-12">
             <strong class="text-secondary">
