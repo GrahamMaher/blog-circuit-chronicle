@@ -33,7 +33,7 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">
                         {% if user.is_authenticated %}
-                            {% if user in post.likes.all %}
+                            {% if user_liked %}
                                 Unlike
                             {% else %}
                                 Like

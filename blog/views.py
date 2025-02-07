@@ -15,22 +15,12 @@ class PostList(generic.ListView):
 
 
 def post_detail(request, slug):
-    """
-    Display an individual :model:`blog.Post`.
 
-    **Context**
-
-    ``post``
-        An instance of :model:`blog.Post`.
-
-    **Template:**
-
-    :template:`blog/post_detail.html`
-    """
     queryset = Post.objects.filter(status=1)
     post = get_object_or_404(queryset, slug=slug)
     comments = post.comments.all().order_by("-created_on")
     comment_count = post.comments.filter(approved=True).count()
+    user_liked = post.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
     if request.method == "POST":
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
@@ -43,7 +33,8 @@ def post_detail(request, slug):
                 'Comment submitted and awaiting approval'
             )
     
-    comment_form = CommentForm()
+    else:
+        comment_form = CommentForm()
 
     return render(
         request,
@@ -52,7 +43,8 @@ def post_detail(request, slug):
             "post": post,
             "comments": comments,
             "comment_count": comment_count,
-            "comment_form": comment_form
+            "comment_form": comment_form,
+            "user_liked": user_liked,
         },
     )
 
@@ -111,5 +103,9 @@ def like_post(request, post_id):
     if not created:
         # If the like already exists, remove it (unlike)
         like.delete()
+        messages.success(request, "You have unliked the post.")
+    
+    else:
+        messages.success(request, "You have liked the post.")
 
     return redirect('post_detail', slug=post.slug)  # Use slug for redirection
