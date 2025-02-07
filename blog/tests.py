@@ -7,10 +7,10 @@ from .forms import CommentForm
 
 class BlogViewsTest(TestCase):
     def setUp(self):
-        # Create a user
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+
+        self.user = User.objects.create_user(username='testuser',  
+                                             password='testpass')
         
-        # Create a post
         self.post = Post.objects.create(
             title='Test Post',
             slug='test-post',
@@ -19,7 +19,6 @@ class BlogViewsTest(TestCase):
             status=1
         )
         
-        # Create a comment
         self.comment = Comment.objects.create(
             post=self.post,
             author=self.user,
@@ -27,38 +26,40 @@ class BlogViewsTest(TestCase):
         )
 
     def test_post_detail_view(self):
-        response = self.client.get(reverse('post_detail', args=[self.post.slug]))
+        response = self.client.get(reverse('post_detail',
+                                            args=[self.post.slug]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'blog/post_detail.html')
-        self.assertContains(response, 'This is a test post.')  # Check if the post content is in the response
+        self.assertContains(response, 'This is a test post.')
 
     def test_comment_edit_view(self):
-        self.client.login(username='testuser', password='testpass')  # Log in the user
-        response = self.client.post(reverse('comment_edit', args=[self.post.slug, self.comment.id]), {
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.post(reverse('comment_edit', 
+                                    args=[self.post.slug, self.comment.id]), {
             'body': 'This is an updated comment.'
         })
-        self.assertEqual(response.status_code, 302)  # Check for redirect
-        self.comment.refresh_from_db()  # Refresh the comment instance
-        self.assertEqual(self.comment.body, 'This is an updated comment.')  # Check if the comment was updated
-
+        self.assertEqual(response.status_code, 302)
+        self.comment.refresh_from_db()
+        self.assertEqual(self.comment.body, 'This is an updated comment.')
     def test_comment_delete_view(self):
-        self.client.login(username='testuser', password='testpass')  # Log in the user
-        response = self.client.post(reverse('comment_delete', args=[self.post.slug, self.comment.id]))
-        self.assertEqual(response.status_code, 302)  # Check for redirect
-        self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())  # Check if the comment was deleted
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.post(reverse('comment_delete', 
+                                            args=[self.post.slug, self.comment.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
 
     def test_like_post_view(self):
-        self.client.login(username='testuser', password='testpass')  # Log in the user
+        self.client.login(username='testuser', password='testpass')
         response = self.client.post(reverse('like_post', args=[self.post.id]))
-        self.assertEqual(response.status_code, 302)  # Check for redirect
-        self.assertTrue(Like.objects.filter(user=self.user, post=self.post).exists())  # Check if like was created
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Like.objects.filter(user=self.user, post=self.post)
+                                            .exists())
 
-        # Test unliking the post
         response = self.client.post(reverse('like_post', args=[self.post.id]))
-        self.assertEqual(response.status_code, 302)  # Check for redirect
-        self.assertFalse(Like.objects.filter(user=self.user, post=self.post).exists())  # Check if like was removed
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Like.objects.filter(user=self.user, post=self.post).exists())
 
     def test_like_post_view_not_authenticated(self):
         response = self.client.post(reverse('like_post', args=[self.post.id]))
-        self.assertEqual(response.status_code, 200)  # Check if the login required page is rendered
-        self.assertTemplateUsed(response, 'blog/login_required.html')  # Check if the correct template is used
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'blog/login_required.html')

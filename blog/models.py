@@ -4,8 +4,6 @@ from cloudinary.models import CloudinaryField
 
 STATUS = ((0, "Draft"), (1, "Published"))
 
-# Create your models here.
-
 
 class Post(models.Model):
     title = models.CharField(max_length=200, unique=True)
@@ -26,6 +24,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True,
                              related_name="comments")
@@ -43,13 +42,15 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE,
+                             related_name='likes')
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
 
-        unique_together = ('user', 'post')  # Ensure a user can like a post only once
+        unique_together = ('user', 'post')
 
     def __str__(self):
         return f"{self.user} likes {self.post.title}"

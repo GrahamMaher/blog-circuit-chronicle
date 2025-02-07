@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.contrib import messages  # Make sure to import messages
+from django.contrib import messages
 from .forms import CollaborateForm
 
 
@@ -8,7 +8,7 @@ def info(request):
         collaborate_form = CollaborateForm(data=request.POST)
         if collaborate_form.is_valid():
             collaborate_form.save()
-            messages.add_message(request, messages.SUCCESS, "Request received, look forward to working together.")
+            messages.add_message(request, messages.SUCCESS, "Received.")
 
     collaborate_form = CollaborateForm()
 
@@ -18,5 +18,4 @@ def info(request):
         {
             "collaborate_form": collaborate_form
         },
-
     )

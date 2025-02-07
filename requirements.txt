@@ -12,4 +12,5 @@ gunicorn==23.0.0
 pillow==11.1.0
 psycopg2==2.9.10
 sqlparse==0.5.3
+validator==0.7.1
 whitenoise==6.8.2

@@ -158,27 +158,27 @@ body {
 }
 
 .card-img-top {
-    width: 100%; /* Make the image take the full width of the card */
-    height: 200px; /* Set a fixed height for the images */
-    object-fit: cover; /* Ensure the image covers the area without distortion */
+    width: 100%; 
+    height: 200px;
+    object-fit: cover; 
 }
 
 /* Navigation Styles */
 .navbar-nav .nav-item.separator {
-    position: relative; /* Position for the separator */
+    position: relative; 
 }
 
 .navbar-nav .nav-item.separator::after {
-    content: ""; /* Empty content for the separator */
-    position: absolute; /* Position it absolutely */
-    right: 0; /* Position it to the right of the item */
-    top: 50%; /* Center it vertically */
-    transform: translateY(-50%); /* Adjust for vertical centering */
-    width: 1px; /* Width of the separator */
-    height: 20px; /* Height of the separator */
-    background-color: #ccc; /* Color of the separator */
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%; 
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background-color: #080000;
 }
 
 .navbar-nav .nav-item.separator:last-child::after {
-    display: none; /* Hide the separator after the last item */
+    display: none;
 }

@@ -5,8 +5,6 @@ from django.http import HttpResponseRedirect
 from .models import Post, Comment, Like
 from .forms import CommentForm
 
-# Create your views here.
-
 
 class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1)
@@ -20,7 +18,11 @@ def post_detail(request, slug):
     post = get_object_or_404(queryset, slug=slug)
     comments = post.comments.all().order_by("-created_on")
     comment_count = post.comments.filter(approved=True).count()
-    user_liked = post.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
+    user_liked = (
+                post.likes.filter(user=request.user).exists()
+                if request.user.is_authenticated
+                else False
+                )
     if request.method == "POST":
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
@@ -32,7 +34,7 @@ def post_detail(request, slug):
                 request, messages.SUCCESS,
                 'Comment submitted and awaiting approval'
             )
-    
+
     else:
         comment_form = CommentForm()
 
@@ -50,9 +52,6 @@ def post_detail(request, slug):
 
 
 def comment_edit(request, slug, comment_id):
-    """
-    view to edit comments
-    """
     if request.method == "POST":
 
         queryset = Post.objects.filter(status=1)
@@ -74,9 +73,6 @@ def comment_edit(request, slug, comment_id):
 
 
 def comment_delete(request, slug, comment_id):
-    """
-    view to delete comment
-    """
     queryset = Post.objects.filter(status=1)
     post = get_object_or_404(queryset, slug=slug)
     comment = get_object_or_404(Comment, pk=comment_id)
@@ -91,21 +87,19 @@ def comment_delete(request, slug, comment_id):
     return HttpResponseRedirect(reverse('post_detail', args=[slug]))
 
 
-
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
     if not request.user.is_authenticated:
-        return render(request, 'blog/login_required.html')  # Render the login required page
+        return render(request, 'blog/login_required.html')
 
     like, created = Like.objects.get_or_create(user=request.user, post=post)
 
     if not created:
-        # If the like already exists, remove it (unlike)
         like.delete()
         messages.success(request, "You have unliked the post.")
-    
+
     else:
         messages.success(request, "You have liked the post.")
 
-    return redirect('post_detail', slug=post.slug)  # Use slug for redirection
+    return redirect('post_detail', slug=post.slug)
