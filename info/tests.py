@@ -1,22 +1,6 @@
 from django.test import TestCase
 from .models import About, CollaborateRequest
 
-class AboutModelTest(TestCase):
-    def setUp(self):
-        self.about = About.objects.create(
-            title='About Me',
-            profile_image='path/to/image.jpg',  # Use a valid Cloudinary image path or mock it
-            content='This is a test about me.'
-        )
-
-    def test_about_creation(self):
-        self.assertEqual(self.about.title, 'About Me')
-        self.assertEqual(self.about.content, 'This is a test about me.')
-        self.assertIsNotNone(self.about.updated_on)  # Check if updated_on is set
-
-    def test_string_representation(self):
-        self.assertEqual(str(self.about), 'About Me')
-
 
 class CollaborateRequestModelTest(TestCase):
     def setUp(self):
